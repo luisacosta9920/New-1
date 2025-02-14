@@ -1,0 +1,86 @@
+/* jshint ignore:start */
+
+var CookiesManager = (function() {
+    var instance;
+
+    function init() {
+
+        return {
+            checkAndInit: function()
+            {
+                var ref = this;
+
+                if(ref.getCookie('cookies') == undefined){
+                    jQuery(".faldon-cookies").removeClass('hide');
+                }
+                else{
+                    jQuery(".cont-img-cookie").removeClass('hide');
+                }
+
+                jQuery('.js-new-cookies-btn-all').on("click", function(e){
+                    e.preventDefault();
+                    ref.setCookie('cookies', true, 20);
+                    ref.setCookie('cookies-all', true, 20);
+                    jQuery(".faldon-cookies").remove();
+                    location.reload();
+                });
+
+                jQuery('.js-new-cookies-btn').on("click", function(e){
+                    e.preventDefault();
+                    ref.eliminarCookies();
+                    ref.setCookie('cookies', true, 20);
+                    ref.eraseCookie('cookies-all');
+                    jQuery(".faldon-cookies").remove();
+                    location.reload();
+                });
+
+                jQuery('.cookiesLink').on('click', function (e){
+                    e.preventDefault();
+                    jQuery(".faldon-cookies").removeClass('hide');
+                    jQuery(".cont-img-cookie").addClass('hide');
+                });
+            },
+
+            setCookie: function(c_name, value, exdays) {
+                var exdate = new Date();
+                exdate.setDate(exdate.getDate() + exdays);
+                var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+                document.cookie = c_name + "=" + c_value;
+            },
+
+            getCookie: function(c_name) {
+                var i, x, y, ARRcookies = document.cookie.split(";");
+                for (i = 0; i < ARRcookies.length; i++) {
+                    x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+                    y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+                    x = x.replace(/^\s+|\s+$/g, "");
+                    if (x == c_name) {
+                        return unescape(y);
+                    }
+                }
+            },
+            
+            eraseCookie: function(c_name) {
+                document.cookie = c_name+'=; Max-Age=-99999999;';
+            },
+
+            eliminarCookies: function() {
+                document.cookie.split(";").forEach(function(c) {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
+            }
+        };
+    }
+
+    return {
+
+        getInstance: function(){
+            if (!instance){
+                instance = init();
+            }
+            return instance;
+        }
+    };
+
+})();
+/* jshint ignore:end */
